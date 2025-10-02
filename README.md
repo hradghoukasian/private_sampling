@@ -13,7 +13,7 @@ Hrad Ghoukasian · Bonwoo Lee · Shahab Asoodeh
 - `experiments/` — scripts to run the experiments and generate data.  
 - `plotting/` — scripts to visualize results from the saved experiment data.  
 - `utils/` — core implementations of mechanisms and measures used in the experiments.
-- `figures/' — generated figures used in the paper  
+- `figures/` — generated figures used in the paper  
 - `requirements.txt` — Python package dependencies.  
 
 All scripts should be run from the **repository root** using the `-m` flag (e.g., `python -m experiments.exp_...`).
