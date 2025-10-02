@@ -1,81 +1,109 @@
+# private_sampling
 
-# Reproducibility Instructions
+This repository contains the official code implementation for the experiments in:
 
-This repository contains code to reproduce all experiments and figures in the paper.
+**Locally Optimal Private Sampling: Beyond the Global Minimax**  
+Hrad Ghoukasian · Bonwoo Lee · Shahab Asoodeh  
+*NeurIPS 2025*
 
-## Overview
+---
 
-- `exp_*.py` scripts generate experiment data.
-- `plot_*.py` scripts generate plots from the saved data.
+## 📂 Repository Structure
 
-## Figure 1
+- `experiments/` — scripts to run the experiments and generate data.  
+- `plotting/` — scripts to visualize results from the saved experiment data.  
+- `utils/` — core implementations of mechanisms and measures used in the experiments.  
+- `requirements.txt` — Python package dependencies.  
 
-To generate the output distributions and visualize Figure 1:
+All scripts should be run from the **repository root** using the `-m` flag (e.g., `python -m experiments.exp_...`).
 
-```bash
-python exp_LapMixture_visual.py
-python plot_LapMixture_visual.py
-```
+---
 
-## Finite Space Results
+## 🔹 Figure 1 — Laplace Mixture Visualization
 
-Six figures are generated for various values of \( k \) under both **pure LDP** and **ν-GLDP** settings. 
-
-### Pure LDP (Figures 3,5,6)
-
-```bash
-python plot_finite_pure.py --k 10
-python plot_finite_pure.py --k 20
-python plot_finite_pure.py --k 100
-```
-
-### ν-GLDP (Figures 7,8,9)
+To generate the output distributions and produce Figure 1:
 
 ```bash
-python plot_finite_GLDP.py --k 10
-python plot_finite_GLDP.py --k 20
-python plot_finite_GLDP.py --k 100
+python -m experiments.exp_LapMixture_visual
+python -m plotting.plot_LapMixture_visual
 ```
+---
 
-## Continuous Space Results
+## 🔹 Finite Space Results
 
-### 1D Laplace Mixture Pure LDP (Figure 4)
+Six figures are generated, grouped into two categories: pure LDP and ν-GLDP.
+
+### Pure LDP (Figures 3, 5, 6)
 
 ```bash
-python exp_1DLaplaceMix_pure.py --eps 0.1 --scale 1 --seed 1 --size 100
-python exp_1DLaplaceMix_pure.py --eps 0.5 --scale 1 --seed 2 --size 100
-python exp_1DLaplaceMix_pure.py --eps 1.0 --scale 1 --seed 3 --size 100
-python exp_1DLaplaceMix_pure.py --eps 2.0 --scale 1 --seed 4 --size 100
-
-python plot_1DLaplaceMix_pure.py
+python -m plotting.plot_finite_pure --k 10
+python -m plotting.plot_finite_pure --k 20
+python -m plotting.plot_finite_pure --k 100
 ```
 
-### 1D Laplace Mixture ν-GLDP (Figure 10)
+### ν-GLDP (Figures 7, 8, 9)
 
 ```bash
-python exp_1DLaplaceMix_GLDP.py --nu 0.1 --scale 1 --seed 1 --size 100
-python exp_1DLaplaceMix_GLDP.py --nu 0.5 --scale 1 --seed 2 --size 100
-python exp_1DLaplaceMix_GLDP.py --nu 1.0 --scale 1 --seed 3 --size 100
-python exp_1DLaplaceMix_GLDP.py --nu 2.0 --scale 1 --seed 4 --size 100
+python -m plotting.plot_finite_GLDP --k 10
+python -m plotting.plot_finite_GLDP --k 20
+python -m plotting.plot_finite_GLDP --k 100
 
-python plot_1DLaplaceMix_GLDP.py
-```
+---
 
-### 2D Laplace Mixture Pure LDP (Figure 11)
+## 🔹 Continuous Space Results
+
+### 1D Laplace Mixture — Pure LDP (Figure 4)
 
 ```bash
-python exp_nDLaplaceMix_pure.py --eps 0.1 --scale 1 --seed 1 --size 100 --dim 2
-python exp_nDLaplaceMix_pure.py --eps 0.5 --scale 1 --seed 2 --size 100 --dim 2
-python exp_nDLaplaceMix_pure.py --eps 1.0 --scale 1 --seed 3 --size 100 --dim 2
-python exp_nDLaplaceMix_pure.py --eps 2.0 --scale 1 --seed 4 --size 100 --dim 2
+python -m experiments.exp_1DLaplaceMix_pure --eps 0.1 --scale 1 --seed 1
+python -m experiments.exp_1DLaplaceMix_pure --eps 0.5 --scale 1 --seed 2
+python -m experiments.exp_1DLaplaceMix_pure --eps 1.0 --scale 1 --seed 3
+python -m experiments.exp_1DLaplaceMix_pure --eps 2.0 --scale 1 --seed 4
 
-python plot_nDLaplaceMix_pure.py
+python -m plotting.plot_1DLaplaceMix_pure
 ```
+---
+### 1D Laplace Mixture — ν-GLDP (Figure 10)
 
-## Output
+```bash
+python -m experiments.exp_1DLaplaceMix_GLDP --nu 0.1 --scale 1 --seed 1
+python -m experiments.exp_1DLaplaceMix_GLDP --nu 0.5 --scale 1 --seed 2
+python -m experiments.exp_1DLaplaceMix_GLDP --nu 1.0 --scale 1 --seed 3
+python -m experiments.exp_1DLaplaceMix_GLDP --nu 2.0 --scale 1 --seed 4
 
-Each plotting script generates a `.pdf` or `.png` file containing the reproduced figure. Make sure all required `.npy` files are saved before running the plotting scripts.
+python -m plotting.plot_1DLaplaceMix_GLDP
+```
+---
 
-## System Requirements
+### 2D Laplace Mixture — Pure LDP (Figure 11)
 
-For a list of required Python packages and their versions, please refer to the `requirements.txt` file.
+```bash
+python -m experiments.exp_nDLaplaceMix_pure --eps 0.1 --seed 1 --dim 2
+python -m experiments.exp_nDLaplaceMix_pure --eps 0.5 --seed 2 --dim 2
+python -m experiments.exp_nDLaplaceMix_pure --eps 1.0 --seed 3 --dim 2
+python -m experiments.exp_nDLaplaceMix_pure --eps 2.0 --seed 4 --dim 2
+
+python -m plotting.plot_nDLaplaceMix_pure --dim 2
+```
+---
+
+## 📊 Output
+
+Each plotting script produces a .pdf (and sometimes .eps) file containing the reproduced figure.
+Make sure the corresponding experiment scripts are run first to generate the required .npz files.
+
+---
+
+## ⚙️ System Requirements
+
+Dependencies listed in requirements.txt
+
+Install dependencies with:
+
+```bash
+pip install -r requirements.txt
+```
+---
+
+
+
