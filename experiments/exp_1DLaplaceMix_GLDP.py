@@ -1,0 +1,74 @@
+import numpy as np
+from utils.measure import ContinuousMeasure, LaplaceMixture
+import torch
+from utils.div import *
+from utils.propMech import ProposedMech_Continuous, Local_ProposedMech_Continuous
+from utils.gdp_mech import GDPOptMech, Local_GDPOptMech
+from tqdm import trange
+from argparse import ArgumentParser
+
+def run_experiment(nu='1.0',
+                   mean_num_modes=3,
+                   max_num_modes=10,
+                   maxabs_mode=1,
+                   scale=2,  # Laplace scale parameter b
+                   size=100,
+                   seed:int=0):
+
+    filename = f'data_1DLaplaceMix_nu{nu}.npy'
+    nu = float(nu)
+
+    # setting random seed
+    rng = np.random.default_rng(seed)
+    torch.manual_seed(seed)
+
+    # create mechanisms
+    def global_density_ub(x):
+        return (1 / (2 * scale)) * np.exp(-np.abs(x) / scale)
+
+    meas_ub = ContinuousMeasure(1, global_density_ub,[[-np.inf, np.inf]], auto_truncate=False)
+
+    glob_loc_ratio = 3
+
+    globalGDPMech = GDPOptMech(nu, meas_ub,(1/glob_loc_ratio) *  np.exp(-1 / scale) , glob_loc_ratio * np.exp(1 / scale))
+    localGDPMech = Local_GDPOptMech(nu, meas_ub,  np.exp(-1 / scale) ,  np.exp(1 / scale))
+
+    # globalPropMech = ProposedMech_Continuous(nu, meas_ub,(1/glob_loc_ratio) *  np.exp(-1 / scale) , glob_loc_ratio * np.exp(1 / scale))
+    # localPropMech = Local_ProposedMech_Continuous(nu, meas_ub,  np.exp(-1 / scale) ,  np.exp(1 / scale))
+
+    # run experiment
+    kl_list = np.zeros((size, 2))  # 2 columns: Global, Local
+    tv_list = np.zeros((size, 2))
+    hellinger_list = np.zeros((size, 2))
+
+    for i in trange(size):
+        num_modes = np.minimum(rng.poisson(mean_num_modes - 1) + 1, max_num_modes)
+        modes = rng.uniform(-maxabs_mode, maxabs_mode, (num_modes, 1))
+        #print(f"Modes for iteration {i}: {modes}")
+        weights = rng.dirichlet(np.ones(num_modes))
+
+        # Generate Laplace mixture
+        target = LaplaceMixture(modes, scale, weights)
+        
+        output_global = globalGDPMech(target)
+        output_local = localGDPMech(target)
+
+        kl_list[i, 0] = kl(target, output_global)
+        kl_list[i, 1] = kl(target, output_local)
+
+        tv_list[i, 0] = tv(target, output_global)
+        tv_list[i, 1] = tv(target, output_local)
+
+        hellinger_list[i, 0] = hellinger(target, output_global)
+        hellinger_list[i, 1] = hellinger(target, output_local)
+
+    np.save(filename, np.hstack((kl_list, tv_list, hellinger_list)))
+
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument('--nu', type=str, default='1.0')
+    parser.add_argument('--seed', type=int, default=1)
+    parser.add_argument('--size', type=int, default=100)
+    parser.add_argument('--scale', type=int, default= 1)
+
+    run_experiment(**vars(parser.parse_args()))
