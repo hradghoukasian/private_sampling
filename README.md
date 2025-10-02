@@ -48,7 +48,7 @@ python -m plotting.plot_finite_pure --k 100
 python -m plotting.plot_finite_GLDP --k 10
 python -m plotting.plot_finite_GLDP --k 20
 python -m plotting.plot_finite_GLDP --k 100
-
+```
 ---
 
 ## 🔹 Continuous Space Results
